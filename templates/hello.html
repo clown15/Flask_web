@@ -3,8 +3,11 @@
     
     <body>
         {% if user %}
-            {{ user }}
+            {{ user }} Hello!! 
+            <button type="button" onclick="location.href='/logout' ">로그아웃</button>
+        {% else %}
+            <button type="button" onclick="location.href='/login' ">로그인</button>
         {% endif %}
-        Hello!!
+        
     </body>
 </html>
