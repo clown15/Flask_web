@@ -2,30 +2,36 @@ import os
 from flask import Flask,render_template
 from flask import request,redirect
 from models import db,User
+from flask_wtf.csrf import CSRFProtect
+from forms import RegisterForm
+from sqlalchemy.exc import IntegrityError
 
 app = Flask(__name__)
 
 # view부분
 @app.route("/register/",methods=['GET','POST'])
 def register():
-    if request.method == 'POST':
-        id = request.form.get('id')
-        name = request.form.get('name')
-        password = request.form.get('password')
-        re_password = request.form.get('re-password')
+    form = RegisterForm()
+    if form.validate_on_submit():
+        # id = request.form.get('id')
+        # name = request.form.get('name')
+        # password = request.form.get('password')
+        # re_password = request.form.get('re-password')
 
-        if id and name and password and re_password and (password == re_password):
-            user = User()
-            user.id = id
-            user.password = password
-            user.name = name
+        user = User()
+        user.id = form.data.get('id')
+        user.password = form.data.get('password')
+        user.name = form.data.get('name')
 
+        try:
             db.session.add(user)
             db.session.commit()
 
             return redirect('/')
+        except IntegrityError:
+            db.session.rollback()
 
-    return render_template("register.html")
+    return render_template("register.html",form=form)
 
 
 @app.route("/")
@@ -42,7 +48,12 @@ if __name__ == "__main__":
     app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN']=True
     # DB변경 사항을 추적할지에 대한 변수로 추적을 위해서는 추가 메모리가 필요하며 추적이 필요없다면 false로 설정해야한다.
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
+    # -------- csrf 설정 ------------------
+    app.config['SECRET_KEY'] = 'sdnajkfnwejknvjkfda'
 
+    csrf = CSRFProtect()
+    csrf.init_app(app)
+    # -------------------------------------
     # db설정값 초기화
     db.init_app(app)
     db.app = app
