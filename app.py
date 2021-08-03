@@ -1,9 +1,9 @@
 import os
 from flask import Flask,render_template
-from flask import request,redirect
+from flask import request,redirect,session
 from models import db,User
 from flask_wtf.csrf import CSRFProtect
-from forms import RegisterForm
+from forms import RegisterForm,LoginForm
 from sqlalchemy.exc import IntegrityError
 
 app = Flask(__name__)
@@ -33,9 +33,34 @@ def register():
 
     return render_template("register.html",form=form)
 
+@app.route("/login/",methods=['GET','POST'])
+def login():
+    # 이미 로그인 했을경우
+    if 'user' in session:
+        return redirect('/')
+
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        # 기본키로 객체 호출
+        # user = User.query.get(form.data.get('id'))
+        # 로그인에 대한 검증은 forms.py에있는 Password_Check에서 진행
+        # validate_on_submit이 실행될때 form 데이터에 대해 검증
+        session['user'] = form.data.get('id')
+
+        return redirect('/')
+
+    return render_template('login.html',form=form)
+
+@app.route("/logout/")
+def logout():
+    session.pop('user',None)
+    return redirect('/')
 
 @app.route("/")
 def hello_world():
+    if 'user' in session:
+        return render_template("hello.html",user=session['user'])    
     return render_template("hello.html")
 
 # 직접 실행한 경우
