@@ -77,8 +77,9 @@ if __name__ == "__main__":
     # -------- csrf 설정 ------------------
     app.config['SECRET_KEY'] = 'sdnajkfnwejknvjkfda'
 
-    csrf = CSRFProtect()
-    csrf.init_app(app)
+    # csrf token 설정
+    # csrf = CSRFProtect()
+    # csrf.init_app(app)
     # -------------------------------------
     # db설정값 초기화
     db.init_app(app)
