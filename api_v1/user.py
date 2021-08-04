@@ -29,3 +29,34 @@ def signup():
 
     users = User.query.all()
     return jsonify([user.serialize for user in users])
+
+@api.route('/users/<uid>',methods=['GET','PUT','DELETE'])
+def user_detail(uid):
+    if request.method == 'GET':
+        user = User.query.filter(User.id == uid).first()
+
+        return jsonify(user.serialize)
+    
+    elif request.methods == 'DELETE':
+        User.query.delete(User.id == uid)
+
+        return jsonify(),204
+    else:
+        data = request.get_json()
+        """
+        id = data.get('id')
+        name = data.get('name')
+        password = data.get('password')
+
+        updated_data = {}
+        if name:
+            updated_data['name']=name
+        if password:
+            updated_data['password']=password
+        
+        User.query.filter(User.id == uid).update(updated_data)
+        """
+        User.query.filter(User.id == uid).update(data)
+        user = User.query.filter(User.id == uid).first()
+
+        return jsonify(user.serialize)
