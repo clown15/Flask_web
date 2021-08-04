@@ -19,7 +19,7 @@
             </div>
             <div class="row mt-5">
                 <div class="col-12">
-                    <form method="POST" action=".">
+                    <form method="POST" action="/">
                         {{ form.csrf_token }}
                         {% for field in form %}
                             {% if field.name != "csrf_token" %}

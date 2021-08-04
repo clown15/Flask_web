@@ -27,5 +27,5 @@ def signup():
 
         return jsonify(), 201
 
-
-    return jsonify()
+    users = User.query.all()
+    return jsonify([user.serialize for user in users])
