@@ -6,6 +6,7 @@ from flask_wtf.csrf import CSRFProtect
 from forms import RegisterForm,LoginForm
 from sqlalchemy.exc import IntegrityError
 from api_v1 import api as api_v1
+from flask_jwt import JWT
 
 app = Flask(__name__)
 app.register_blueprint(api_v1,url_prefix='/api/v1')
@@ -86,5 +87,12 @@ if __name__ == "__main__":
     db.app = app
     # db 생성
     db.create_all()
+
+    def authenticate(username,password):
+        user = User.query.filter(user.id==username).first()
+        if user.password == password:
+            return user
+
+    jwt = JWT(app,authenticate)
 
     app.run(host='0.0.0.0',port='5000',debug=True)

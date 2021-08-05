@@ -14,7 +14,7 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
         <script>
-            function login() {
+            function login_api() {
                 $.ajax({
                     url:'/api/v1/user/login',
                     contentType:'application/json',
@@ -30,6 +30,23 @@
                     },
                     error:function(data) {
                         alert(data['responseJSON']['error']);
+                    }
+                })
+            }
+            function login_auth() {
+                $.ajax({
+                    url:'/auth',
+                    contentType:'application/json',
+                    method:'POST',
+                    data:JSON.stringify({
+                        username:$("#id").val(),
+                        password:$("#password").val()
+                    }),
+                    success:function(data) {
+                        console.log(data);
+                    },
+                    error:function(data) {
+                        alert(data);
                     }
                 })
             }
@@ -55,7 +72,8 @@
                             </div>
                             {% endif %}
                         {% endfor %}
-                        <button type="button" class="btn btn-primary" onclick="login()">로그인</button>
+                        <button type="button" class="btn btn-primary" onclick="login_api()">로그인</button>
+                        <button type="button" class="btn btn-primary" onclick="login_auth()">로그인(auth)</button>
                         <!-- <button type="submit" class="btn btn-primary">로그인</button> -->
                     </form>
                 </div>

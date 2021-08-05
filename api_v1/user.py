@@ -76,8 +76,8 @@ def login():
     if not (id and password):
         return jsonify({'error':'Input error'}), 400
 
-    # filter_by의 경우 =을 사용하고 filter의 경우 ==을 사용한다
-
+    # filter_by의 경우 =로 비교하고 colum_name=value의 형식을 사용한다.
+    #  filter의 경우 ==을 통해 비교하고 db.colum_name==value의 형식 사용
     user = User.query.filter_by(id=id).first()
     if not user:
         return jsonify({'error':'아이디를 잘못 입력했습니다.'}), 400
