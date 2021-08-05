@@ -27,6 +27,9 @@
                         console.log(data);
                         alert("환영합니다.")
                         window.location="/"
+                    },
+                    error:function(data) {
+                        alert(data['responseJSON']['error']);
                     }
                 })
             }

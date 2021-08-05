@@ -18,10 +18,10 @@ def users():
         re_password = data.get('re_password')
 
         if not (id and name and password and re_password):
-            return jsonify({'error':'Input error'}), 400
+            return jsonify({'error':'모든값을 입력해야 합니다.'}), 400
 
         if password != re_password:
-            return jsonify({'error':'password input error'}), 400
+            return jsonify({'error':'입력한 비밀번호가 서로 다릅니다.'}), 400
 
         user = User()
         user.id = id
@@ -67,20 +67,22 @@ def user_detail(uid):
 
         return jsonify(user.serialize)
 
-    @api.route('/user/login',methods=['POST'])
-    def login():
-        data = request.get_json()
-        id = data.get('id')
-        password = data.get('password')
+@api.route('/user/login',methods=['POST'])
+def login():
+    data = request.get_json()
+    id = data.get('id')
+    password = data.get('password')
 
-        if not (id and password):
-            return jsonify({'error':'Input error'}), 400
+    if not (id and password):
+        return jsonify({'error':'Input error'}), 400
 
-        # filter_by의 경우 =을 사용하고 filter의 경우 ==을 사용한다
+    # filter_by의 경우 =을 사용하고 filter의 경우 ==을 사용한다
 
-        user = User.query.filter_by(id=id).first()
-        if user.password != password:
-            return jsonify({'error':'Password error'}), 400
-        
-        session['user'] = id
-        return jsonify({'success':'ok'}), 200
+    user = User.query.filter_by(id=id).first()
+    if not user:
+        return jsonify({'error':'아이디를 잘못 입력했습니다.'}), 400
+    if user.password != password:
+        return jsonify({'error':'비밀번호를 잘못 입력했습니다.'}), 400
+    
+    session['user'] = id
+    return jsonify({'success':'ok'}), 200

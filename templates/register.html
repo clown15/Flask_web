@@ -35,10 +35,8 @@
                     alert("회원가입 성공");
                     window.location="/login";
                 },
-                error:function(xtr,status,error) {   // 오류가 발생했을 때 호출된다. 
-                    console.log(xtr.responseJSON);
-                    console.log(status);
-                    console.log(error);
+                error:function(data) {
+                    alert(data['responseJSON']['error']);
                 },
             })
         }
