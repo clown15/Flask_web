@@ -11,7 +11,7 @@ from flask_jwt import JWT
 app = Flask(__name__)
 app.register_blueprint(api_v1,url_prefix='/api/v1')
 # view부분
-@app.route("/register/",methods=['GET','POST'])
+@app.route("/register",methods=['GET','POST'])
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
@@ -35,7 +35,7 @@ def register():
 
     return render_template("register.html",form=form)
 
-@app.route("/login/",methods=['GET','POST'])
+@app.route("/login",methods=['GET','POST'])
 def login():
     # 이미 로그인 했을경우
     if 'user' in session:
@@ -54,16 +54,18 @@ def login():
 
     return render_template('login.html',form=form)
 
-@app.route("/logout/")
+@app.route("/logout")
 def logout():
     session.pop('user',None)
     return redirect('/')
 
 @app.route("/")
-def hello_world():
-    if 'user' in session:
-        return render_template("hello.html",user=session['user'])    
-    return render_template("hello.html")
+# def hello_world():
+#     if 'user' in session:
+#         return render_template("hello.html",user=session['user'])    
+#     return render_template("hello.html")
+def home():
+    return render_template("home.html")
 
 # 직접 실행한 경우
 if __name__ == "__main__":
@@ -89,10 +91,14 @@ if __name__ == "__main__":
     db.create_all()
 
     def authenticate(username,password):
-        user = User.query.filter(user.id==username).first()
+        user = User.query.filter(User.id==username).first()
         if user.password == password:
             return user
+    
+    def identity(paylod):
+        userid = paylod['identity']
+        return User.query.filter(User.id==userid).first()
 
-    jwt = JWT(app,authenticate)
+    jwt = JWT(app,authenticate,identity)
 
     app.run(host='0.0.0.0',port='5000',debug=True)

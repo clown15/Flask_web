@@ -12,6 +12,8 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
         <!-- jquery -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+        <!-- jquery cookie cdn -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 
         <script>
             function login_api() {
@@ -43,12 +45,14 @@
                         password:$("#password").val()
                     }),
                     success:function(data) {
-                        console.log(data);
+                        // path를 지정함으로서 특정경로에서만 사용하게끔 강제할 수 있음
+                        $.cookie('access_token',data.access_token);
+                        window.location='/';
                     },
                     error:function(data) {
                         alert(data);
                     }
-                })
+                });
             }
         </script>
     </head>

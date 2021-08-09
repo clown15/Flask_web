@@ -1,9 +1,11 @@
 from . import api
 from flask import jsonify,request,session
 from models import User,db
+from flask_jwt import jwt_required
 
 #  __init__ 폴더안에 있는 api 호출
 @api.route('/users', methods=['GET','POST'])
+@jwt_required()
 def users():
     if request.method == 'POST':
         # form사용시
