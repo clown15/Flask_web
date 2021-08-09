@@ -67,38 +67,39 @@ def logout():
 def home():
     return render_template("home.html")
 
+# pythonanywhere에서 실행하면 main이 실행되지 않기 때문에 메인문에서 빼 항상 실행되게끔 변경
+basedir = os.path.abspath(os.path.dirname(__file__))
+dbfile = os.path.join(basedir,'db.sqlite')
+
+app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///'+dbfile
+# True로 설정하면 각 리퀘스트의 끝에 데이터베이스 변경사항을 자동 커밋(저장,반영)한다.
+app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN']=True
+# DB변경 사항을 추적할지에 대한 변수로 추적을 위해서는 추가 메모리가 필요하며 추적이 필요없다면 false로 설정해야한다.
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
+# -------- csrf 설정 ------------------
+app.config['SECRET_KEY'] = 'sdnajkfnwejknvjkfda'
+
+# csrf token 설정
+# csrf = CSRFProtect()
+# csrf.init_app(app)
+# -------------------------------------
+# db설정값 초기화
+db.init_app(app)
+db.app = app
+# db 생성
+db.create_all()
+
+def authenticate(username,password):
+    user = User.query.filter(User.id==username).first()
+    if user.password == password:
+        return user
+
+def identity(paylod):
+    userid = paylod['identity']
+    return User.query.filter(User.id==userid).first()
+
+jwt = JWT(app,authenticate,identity)
+
 # 직접 실행한 경우
 if __name__ == "__main__":
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    dbfile = os.path.join(basedir,'db.sqlite')
-
-    app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///'+dbfile
-    # True로 설정하면 각 리퀘스트의 끝에 데이터베이스 변경사항을 자동 커밋(저장,반영)한다.
-    app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN']=True
-    # DB변경 사항을 추적할지에 대한 변수로 추적을 위해서는 추가 메모리가 필요하며 추적이 필요없다면 false로 설정해야한다.
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
-    # -------- csrf 설정 ------------------
-    app.config['SECRET_KEY'] = 'sdnajkfnwejknvjkfda'
-
-    # csrf token 설정
-    # csrf = CSRFProtect()
-    # csrf.init_app(app)
-    # -------------------------------------
-    # db설정값 초기화
-    db.init_app(app)
-    db.app = app
-    # db 생성
-    db.create_all()
-
-    def authenticate(username,password):
-        user = User.query.filter(User.id==username).first()
-        if user.password == password:
-            return user
-    
-    def identity(paylod):
-        userid = paylod['identity']
-        return User.query.filter(User.id==userid).first()
-
-    jwt = JWT(app,authenticate,identity)
-
     app.run(host='0.0.0.0',port='5000',debug=True)
